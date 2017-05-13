@@ -18,18 +18,18 @@ func NewUserService(session *Session, dbName string, collectionName string, hash
 	return &UserService{collection, hash}
 }
 
-func (p *UserService) Create(u *root.User) error {
+func (us *UserService) Create(u *root.User) error {
 	user := newUserModel(u)
-	hashedPassword, err := p.hash.Generate(user.Password)
+	hashedPassword, err := us.hash.Generate(user.Password)
 	if err != nil {
 		return err
 	}
 	user.Password = hashedPassword
-	return p.collection.Insert(&user)
+	return us.collection.Insert(&user)
 }
 
-func (p *UserService) GetByUsername(username string) (*root.User, error) {
+func (us *UserService) GetByUsername(username string) (*root.User, error) {
 	model := userModel{}
-	err := p.collection.Find(bson.M{"username": username}).One(&model)
+	err := us.collection.Find(bson.M{"username": username}).One(&model)
 	return model.toRootUser(), err
 }
